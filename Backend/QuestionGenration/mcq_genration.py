@@ -25,6 +25,13 @@ from nltk.tokenize import sent_tokenize
 from flashtext import KeywordProcessor
 
 
+def MCQs_available(word,s2v):
+    word = word.replace(" ", "_")
+    sense = s2v.get_best_sense(word)
+    if sense is not None:
+        return True
+    else:
+        return False
 
 
 
