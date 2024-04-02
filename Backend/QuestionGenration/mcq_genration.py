@@ -83,7 +83,15 @@ def get_phrases(doc):
     phrase_keys=phrase_keys[:50]
     return phrase_keys
 
-
+def is_far(words_list,currentword,thresh,normalized_levenshtein):
+    threshold = thresh
+    score_list =[]
+    for word in words_list:
+        score_list.append(normalized_levenshtein.distance(word.lower(),currentword.lower()))
+    if min(score_list)>=threshold:
+        return True
+    else:
+        return False
 
 def filter_phrases(phrase_keys,max,normalized_levenshtein ):
     filtered_phrases =[]
