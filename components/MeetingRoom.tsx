@@ -110,12 +110,10 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
     const eyeclose2 = results["faceBlendshapes"][0]["categories"][19]["score"]
 
     if(results["faceBlendshapes"][0]["categories"][11]["score"] > 0.80 && results["faceBlendshapes"][0]["categories"][12]["score"] > 0.80){
-      if(role=="Student"){
-
+      
       toast.dismiss()
       toast.info("Please Focus . Please Dont See Up!!")
-      }
-    }
+    } 
 
     if(jawOpen > 0.5){
       if(role=="Student"){
@@ -131,7 +129,7 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
       window.requestAnimationFrame(()=>predictWebcam(video));
     }
   }
-
+ 
 
   // useEffect(() => {
   //   console.log(video)
