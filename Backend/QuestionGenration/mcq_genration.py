@@ -1,5 +1,5 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import numpy as np 
+import pandas as pd 
 import time
 import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
@@ -217,3 +217,52 @@ def get_options(answer,s2v):
 
 
     return distractors,"None"
+
+
+
+def generate_questions_mcq(keyword_sent_mapping,device,tokenizer,model,sense2vec,normalized_levenshtein):
+    batch_text = []
+    answers = keyword_sent_mapping.keys()
+    for answer in answers:
+        txt = keyword_sent_mapping[answer]
+        context = "context: " + txt
+        text = context + " " + "answer: " + answer + " </s>"
+        batch_text.append(text)
+
+    encoding = tokenizer.batch_encode_plus(batch_text, pad_to_max_length=True, return_tensors="pt")
+
+
+    print ("Running model for generation")
+    input_ids, attention_masks = encoding["input_ids"].to(device), encoding["attention_mask"].to(device)
+
+    with torch.no_grad():
+        outs = model.generate(input_ids=input_ids,
+                              attention_mask=attention_masks,
+                              max_length=150)
+
+    output_array ={}
+    output_array["questions"] =[]
+#     print(outs)
+    for index, val in enumerate(answers):
+        individual_question ={}
+        out = outs[index, :]
+        dec = tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+
+        Question = dec.replace("question:", "")
+        Question = Question.strip()
+        individual_question["question_statement"] = Question
+        individual_question["question_type"] = "MCQ"
+        individual_question["answer"] = val
+        individual_question["id"] = index+1
+        individual_question["options"], individual_question["options_algorithm"] = get_options(val, sense2vec)
+
+        individual_question["options"] =  filter_phrases(individual_question["options"], 10,normalized_levenshtein)
+        index = 3
+        individual_question["extra_options"]= individual_question["options"][index:]
+        individual_question["options"] = individual_question["options"][:index]
+        individual_question["context"] = keyword_sent_mapping[val]
+     
+        if len(individual_question["options"])>0:
+            output_array["questions"].append(individual_question)
+
+    return output_array
