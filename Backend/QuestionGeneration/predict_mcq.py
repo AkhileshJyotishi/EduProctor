@@ -41,7 +41,7 @@ class QGen:
         # model.eval()
         self.device = device
         self.model = model
-        self.nlp = spacy.load('en_core_web_sm', quiet=True)
+        self.nlp = spacy.load('en_core_web_sm')
 
         self.s2v = Sense2Vec().from_disk('s2v_old')
 
@@ -90,9 +90,9 @@ class QGen:
                 return final_output
             end = time.time()
 
-            final_output["statement"] = modified_text
-            final_output["questions"] = generated_questions["questions"]
-            final_output["time_taken"] = end-start
+            # final_output["statement"] = modified_text
+            # final_output["questions"] = generated_questions["questions"]
+            # final_output["time_taken"] = end-start
             
             if torch.device=='cuda':
                 torch.cuda.empty_cache()
