@@ -16,7 +16,6 @@ const MeetingPage = () => {
   const { isLoaded, user } = useUser();
   const { call, isCallLoading } = useGetCallById(id);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
-  
 
   if (!isLoaded || isCallLoading) return <Loader />;
 
@@ -38,6 +37,7 @@ const MeetingPage = () => {
   // }
   
 
+
   // get more info about custom call type:  https://getstream.io/video/docs/react/guides/configuring-call-types/
   const notAllowed = call.type === 'invited' && (!user || !call.state.members.find((m) => m.user.id === user.id));
 
@@ -45,13 +45,13 @@ const MeetingPage = () => {
 
   return (
     <main className="h-screen w-full">
-      <StreamCall call={call}>
+      <StreamCall  call={call}>
         <StreamTheme>
 
         {!isSetupComplete ? (
           <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
         ) : (
-          <MeetingRoom />
+          <MeetingRoom enabled={call?.camera.state.status}/>
         )}
         </StreamTheme>
       </StreamCall>
