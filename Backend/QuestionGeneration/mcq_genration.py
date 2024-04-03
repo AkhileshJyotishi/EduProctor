@@ -205,7 +205,7 @@ def sense2vec_get_words(word,s2v):
     return out
 
 def get_options(answer,s2v):
-    distractors =[]
+        
 
     try:
         distractors = sense2vec_get_words(answer,s2v)
@@ -242,27 +242,34 @@ def generate_questions_mcq(keyword_sent_mapping,device,tokenizer,model,sense2vec
 
     output_array ={}
     output_array["questions"] =[]
+   
 #     print(outs)
     for index, val in enumerate(answers):
         individual_question ={}
         out = outs[index, :]
         dec = tokenizer.decode(out, skip_special_tokens=True, clean_up_tokenization_spaces=True)
+        # print(dec)
 
         Question = dec.replace("question:", "")
         Question = Question.strip()
-        individual_question["question_statement"] = Question
-        individual_question["question_type"] = "MCQ"
-        individual_question["answer"] = val
+        individual_question["question"] = Question
+        individual_question["questionType"] = "text"
+        individual_question["correctAnswer"] = val
         individual_question["id"] = index+1
-        individual_question["options"], individual_question["options_algorithm"] = get_options(val, sense2vec)
+        individual_question["answers"], individual_question["options_algorithm"] = get_options(val, sense2vec)
 
-        individual_question["options"] =  filter_phrases(individual_question["options"], 10,normalized_levenshtein)
+        individual_question["answers"] =  filter_phrases(individual_question["answers"], 10,normalized_levenshtein)
         index = 3
-        individual_question["extra_options"]= individual_question["options"][index:]
-        individual_question["options"] = individual_question["options"][:index]
-        individual_question["context"] = keyword_sent_mapping[val]
+        print(individual_question["answers"])
+        # individual_question["extra_options"]= individual_question["answers"][index:]
+        # individual_question["answers"] = individual_question["answers"][:index]
+        # individual_question["context"] = keyword_sent_mapping[val]
+        individual_question["answerSelectionType"]="single"
+        individual_question["messageForCorrectAnswer"]="Correct answer. Good job."
+        individual_question["messageForIncorrectAnswer"]="Incorrect answer. Please try again."
+        individual_question["point"]="20"
      
-        if len(individual_question["options"])>0:
+        if len(individual_question["answers"])>0:
             output_array["questions"].append(individual_question)
-
+    print("output",output_array)
     return output_array

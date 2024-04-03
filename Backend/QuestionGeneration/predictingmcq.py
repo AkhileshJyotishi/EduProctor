@@ -1,5 +1,5 @@
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import numpy as np 
+import pandas as pd 
 import time
 import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
@@ -59,10 +59,11 @@ class QGen:
         start = time.time()
         inp = {
             "input_text": payload.get("input_text"),
-            "max_questions": payload.get("max_questions", 4)
+            "max_questions": payload.get("max_questions", 6)
         }
 
         text = inp['input_text']
+        print(text)
         sentences = tokenize_sentences(text)
         joiner = " "
         modified_text = joiner.join(sentences)
@@ -77,7 +78,7 @@ class QGen:
             text_snippet = " ".join(keyword_sentence_mapping[k][:3])
             keyword_sentence_mapping[k] = text_snippet
 
-   
+        print(keyword_sentence_mapping)
         final_output = {}
 
         if len(keyword_sentence_mapping.keys()) == 0:
@@ -97,4 +98,4 @@ class QGen:
             if torch.device=='cuda':
                 torch.cuda.empty_cache()
                 
-            return final_output
+            return generated_questions

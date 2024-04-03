@@ -1,7 +1,7 @@
 from pprint import pprint
 import nltk
 nltk.download('stopwords')
-from Backend.QuestionGeneration.predict_mcq import QGen
+from Backend.QuestionGeneration.predictingmcq import QGen
 
 qe= QGen()
 payload = {
