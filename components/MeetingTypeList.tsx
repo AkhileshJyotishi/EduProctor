@@ -13,6 +13,7 @@ import { Textarea } from './ui/textarea';
 import ReactDatePicker from 'react-datepicker';
 import { useToast } from './ui/use-toast';
 import { Input } from './ui/input';
+import { useRolesContext } from '@/providers/RolesProvider';
 
 const initialValues = {
   dateTime: new Date(),
@@ -21,7 +22,7 @@ const initialValues = {
 };
 
 // change
-const role :string= "Teacher"
+// const role :string= "Teacher"
 
 const MeetingTypeList = () => {
   const router = useRouter();
@@ -33,7 +34,7 @@ const MeetingTypeList = () => {
   const client = useStreamVideoClient();
   const { user } = useUser();
   const { toast } = useToast();
-
+  const {role}=useRolesContext()
 
   async function qhusuwhs() {
     console.log("object",user)

@@ -5,12 +5,13 @@ import { usePathname } from 'next/navigation';
 
 import { sidebarLinks } from '@/constants';
 import { cn } from '@/lib/utils';
+import { useRolesContext } from '@/providers/RolesProvider';
 
 const Sidebar = () => {
   const pathname = usePathname();
-
+const {role}=useRolesContext()
   // change
-  const role = "Teacher"
+  // const role = "Teacher"
 
   const isActive = pathname === "/icons/add-personal.svg" || pathname.startsWith(`/icons/add-personal.svg/`);
 

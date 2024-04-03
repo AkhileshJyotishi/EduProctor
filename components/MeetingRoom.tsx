@@ -15,7 +15,7 @@ import {
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Users, LayoutList } from 'lucide-react';
-
+import axios from "axios"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,7 +26,11 @@ import {
 import Loader from './Loader';
 import EndCallButton from './EndCallButton';
 import { cn } from '@/lib/utils';
+import { useRolesContext } from '@/providers/RolesProvider';
+import { async } from 'regenerator-runtime';
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
   const searchParams = useSearchParams();
@@ -88,18 +92,37 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
 
   // let video = document.getElementsByClassName("str-video_video str-video_video--mirror")[0] as HTMLVideoElement | undefined
 
-    console.log("this predictWebcam just ogot ext")
     // Now let's start detecting the stream.
     if (runningMode === "IMAGE") {
       runningMode = "VIDEO";
       await faceLandmarker.setOptions({ runningMode: runningMode });
     }
     let startTimeMs = performance.now();
-    console.log(lastVideoTime, " ", video?.currentTime)
+    // console.log(lastVideoTime, " ", video?.currentTime)
     if (lastVideoTime !== video?.currentTime) {
       lastVideoTime = video.currentTime;
       results = faceLandmarker.detectForVideo(video, startTimeMs);
-      console.log("akhilesh ", results)
+
+    
+    const jawOpen = results["faceBlendshapes"][0]["categories"][25]["score"]
+    const eyeclose1 = results["faceBlendshapes"][0]["categories"][20]["score"]
+
+    const eyeclose2 = results["faceBlendshapes"][0]["categories"][19]["score"]
+
+    if(results["faceBlendshapes"][0]["categories"][11]["score"] > 0.80 && results["faceBlendshapes"][0]["categories"][12]["score"] > 0.80){
+      if(role=="Student"){
+
+      toast.dismiss()
+      toast.info("Please Focus . Please Dont See Up!!")
+      }
+    }
+
+    if(jawOpen > 0.5){
+      if(role=="Student"){
+        toast.dismiss()
+          toast.warning("Please Focus . Don't Yawn!!")
+      }
+    }
     }
 
 
@@ -172,6 +195,7 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
 
   // const {status}=useCameraState()
   const callingState = useCallCallingState();
+  const {role}=useRolesContext()
 
 
   // useEffect(() => {
@@ -259,6 +283,127 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
         );
     }
   };
+const text=`Water is absolutely vital for life on Earth. It covers approximately 71% of our planet's surface, playing a crucial role in sustaining ecosystems and supporting human civilization. However, the majority of this water is saline, found in oceans, leaving only about 2.5% as freshwater, essential for drinking, agriculture, and sanitation. Unfortunately, a significant portion of this freshwater is inaccessible, trapped in glaciers and polar ice caps. Even more concerning is the fact that over 2 billion people worldwide lack access to clean drinking water due to pollution, inadequate infrastructure, and other challenges.
+
+In developed countries like the United States, the average person consumes a staggering 100 gallons of water per day, highlighting the importance of responsible water usage. To address the growing issue of water scarcity and contamination, it is imperative that we prioritize conservation efforts, implement sustainable water management practices, and invest in technologies to improve access to clean water for all. By taking proactive measures to protect and preserve our freshwater resources, we can ensure a healthier future for both our planet and its inhabitants.`
+
+const question= [
+  {
+    "answerSelectionType": "single",
+    "answers": [
+      "Saltwater",
+      "Brackish",
+      "Phytoplankton"
+    ],
+    "correctAnswer": "freshwater",
+    "id": 1,
+    "messageForCorrectAnswer": "Correct answer. Good job.",
+    "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
+    "options_algorithm": "sense2vec",
+    "point": "20",
+    "question": "What is the only water on Earth that is used for drinking and growing food?",
+    "questionType": "text"
+  },
+  {
+    "answerSelectionType": "single",
+    "answers": [
+      "Polar Caps",
+      "Sea Levels",
+      "Glaciers",
+      "Ice Sheets",
+      "Permafrost",
+      "Oceans",
+      "Arctic Ice"
+    ],
+    "correctAnswer": "ice caps",
+    "id": 2,
+    "messageForCorrectAnswer": "Correct answer. Good job.",
+    "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
+    "options_algorithm": "sense2vec",
+    "point": "20",
+    "question": "Where is most of the freshwater on Earth trapped?",
+    "questionType": "text"
+  },
+  {
+    "answerSelectionType": "single",
+    "answers": [
+      "Ice Sheets",
+      "Oceans",
+      "Sea Ice",
+      "Lakes",
+      "Antarctic",
+      "Polar Caps",
+      "Volcanic Activity",
+      "Permafrost"
+    ],
+    "correctAnswer": "glaciers",
+    "id": 3,
+    "messageForCorrectAnswer": "Correct answer. Good job.",
+    "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
+    "options_algorithm": "sense2vec",
+    "point": "20",
+    "question": "Where is most of the freshwater on Earth trapped?",
+    "questionType": "text"
+  },
+  {
+    "answerSelectionType": "single",
+    "answers": [
+      "Pollutants",
+      "Environmental Damage",
+      "Carbon Emissions",
+      "Greenhouse Gasses",
+      "Oil Spills"
+    ],
+    "correctAnswer": "pollution",
+    "id": 4,
+    "messageForCorrectAnswer": "Correct answer. Good job.",
+    "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
+    "options_algorithm": "sense2vec",
+    "point": "20",
+    "question": "Why do people have no clean water?",
+    "questionType": "text"
+  },
+  {
+    "answerSelectionType": "single",
+    "answers": [
+      "Planet",
+      "Moon",
+      "Solar System"
+    ],
+    "correctAnswer": "earth",
+    "id": 5,
+    "messageForCorrectAnswer": "Correct answer. Good job.",
+    "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
+    "options_algorithm": "sense2vec",
+    "point": "20",
+    "question": "What is the most important place for life on earth?",
+    "questionType": "text"
+  },
+  {
+    "answerSelectionType": "single",
+    "answers": [
+      "Issues"
+    ],
+    "correctAnswer": "problems",
+    "id": 6,
+    "messageForCorrectAnswer": "Correct answer. Good job.",
+    "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
+    "options_algorithm": "sense2vec",
+    "point": "20",
+    "question": "Why do people have no clean water?",
+    "questionType": "text"
+  }
+]
+const GenerateQuz=async()=>{
+//   const response=await axios.post("http://localhost:5500/mcq_generation",JSON.stringify({
+//     "data":text
+//   }))
+//   console.log("accept ",response)
+// const data=await response.data;
+
+router.push(`/quiz?data=${JSON.stringify(question)}`)
+
+}
 
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
@@ -306,8 +451,23 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
           </div>
         </button>
         {!isPersonalRoom && <EndCallButton />}
+        {role=="Teacher" && <button onClick={GenerateQuz} >Generate Quiz</button>}
+        <ToastContainer
+              position="top-center"
+              autoClose={5000}
+              hideProgressBar
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable={false}
+              pauseOnHover
+              theme="dark"
+            />
       </div>
+
     </section>
+
   );
 };
 
