@@ -399,7 +399,8 @@ const GenerateQuz=async()=>{
 //   console.log("accept ",response)
 // const data=await response.data;
 
-router.push(`/quiz?data=${JSON.stringify(question)}`)
+// router.push(`/quiz?data=${JSON.stringify(question)}`)
+toast.success("Quiz Generated Successfully")
 
 }
 
