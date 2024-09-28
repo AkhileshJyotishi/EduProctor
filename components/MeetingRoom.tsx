@@ -104,23 +104,28 @@ const MeetingRoom = ({enabled}:{enabled:InputDeviceStatus}) => {
       results = faceLandmarker.detectForVideo(video, startTimeMs);
 
     
-    const jawOpen = results["faceBlendshapes"][0]["categories"][25]["score"]
-    const eyeclose1 = results["faceBlendshapes"][0]["categories"][20]["score"]
-
-    const eyeclose2 = results["faceBlendshapes"][0]["categories"][19]["score"]
-
-    if(results["faceBlendshapes"][0]["categories"][11]["score"] > 0.80 && results["faceBlendshapes"][0]["categories"][12]["score"] > 0.80){
-      
-      toast.dismiss()
-      toast.info("Please Focus . Please Dont See Up!!")
-    } 
-
-    if(jawOpen > 0.5){
-      if(role=="Student"){
+      // console.log("yash@uber ",results["faceBlendshapes"][0])
+      if(results["faceBlendshapes"][0]){
+        const jawOpen = results["faceBlendshapes"][0]["categories"][25]["score"]
+      console.log("yash@uber ",jawOpen)
+      const eyeclose1 = results["faceBlendshapes"][0]["categories"][20]["score"]
+  
+      const eyeclose2 = results["faceBlendshapes"][0]["categories"][19]["score"]
+  
+      if(results["faceBlendshapes"][0]["categories"][11]["score"] > 0.80 && results["faceBlendshapes"][0]["categories"][12]["score"] > 0.80){
+        
         toast.dismiss()
-          toast.warning("Please Focus . Don't Yawn!!")
+        toast.info("Please Focus . Please Dont See Up!!")
+      } 
+  
+      if(jawOpen > 0.5){
+        if(role=="Student"){
+          toast.dismiss()
+            toast.warning("Please Focus . Don't Yawn!!")
+        }
       }
-    }
+
+      }
     }
 
 
